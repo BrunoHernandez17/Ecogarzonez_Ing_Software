@@ -1,0 +1,6 @@
+{
+  "name": "Gestor de Tareas Sencillo",
+  "description": "Una aplicación sencilla de gestión de tareas con un servidor Node.js/Express y frontend de React/Vite.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
