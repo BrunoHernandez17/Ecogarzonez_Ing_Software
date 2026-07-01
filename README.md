@@ -1,54 +1,98 @@
-# Ecogarzones: Gestión de Banquetería Corporativa
+# 🥂 EcoGarzones - Plataforma de Gestión de Banquetería
 
-Plataforma dedicada para implementar y gestionar las operaciones logísticas y de banquetería corporativa para **Ecogarzones**.
+Bienvenido al repositorio oficial de **EcoGarzones**, una plataforma integral de gestión de eventos, banquetería y personal (staff) con un diseño visual Premium. 
 
-Este repositorio centraliza toda la lógica de negocio distribuida (microservicios backend), el cliente de presentación (React frontend) y la infraestructura de contenedores.
-
----
-
-## 🚀 Arquitectura del Proyecto
-
-El sistema está estructurado bajo una arquitectura de microservicios (Cloud-First) orientada al despliegue en la nube:
-
-* **`FrontEnd/`**: Capa de presentación desarrollada en **React (Vite) + Tailwind CSS** que simula el Portal del Cliente (Cotizaciones y Pagos vía Transbank Webpay+), Panel Administrador (Métricas, Control de Inventario y Nómina de Personal), Vista del Supervisor (Kanban interactivo de asignación de turnos) y la App Móvil del Staff (check-in geolocalizado, disponibilidad y reporte de incidencias).
-* **`BackEnd/`**: 4 Microservicios desarrollados en **Java 21 y Spring Boot 3.2.4**:
-  1. `event-service`: Gestión de cotizaciones de banquetes, menús e integración de alertas/calendarios.
-  2. `billing-service`: Facturación, honorarios del staff e integración de pasarelas de pago.
-  3. `logistics-service`: Control de inventario logístico, disponibilidad de personal, check-in digital e incidencias en tiempo real.
-  4. `predictive-analysis-service`: Proyecciones de compra de insumos mediante caché distribuido en **Redis**.
-* **Infraestructura**: Docker y Docker-compose para orquestar la base de datos PostgreSQL, la caché de Redis y los microservicios de forma integrada.
+Este proyecto está construido bajo una arquitectura moderna dividida en un servidor robusto (Backend) con Spring Boot y PostgreSQL, y una interfaz de usuario dinámica (Frontend) con React y Vite.
 
 ---
 
-## 🛠️ Stack Tecnológico
+## 🌟 Características Principales
 
-* **Frontend**: React, TypeScript, Vite, Tailwind CSS, Lucide React.
-* **Backend**: Java 21, Spring Boot 3.2.4, Spring Data JPA, Spring Security, OpenAPI 3 (Swagger).
-* **Persistencia**: PostgreSQL (múltiples bases de datos independientes).
-* **Caché**: Redis.
-* **Contenedores**: Docker, Docker Compose.
+### 1. Portal de Clientes (Cotizador Dinámico)
+- Flujo interactivo de 4 pasos para armar el evento ideal.
+- Selección dinámica de minutas (menús tradicionales, veganos, celíacos, etc.) traídas directamente de la base de datos.
+- Cálculo de presupuesto automático según la cantidad de invitados, el tipo de evento y la barra seleccionada.
+- Seguimiento de peticiones donde el cliente visualiza si su solicitud fue **Aprobada** o **Rechazada**.
+
+### 2. Panel Administrativo (Admin)
+- Control total sobre todas las operaciones de la plataforma.
+- Revisión de cotizaciones entrantes con la opción de aprobarlas para convertirlas en eventos formales o rechazarlas.
+- Vista panorámica de los presupuestos y utilidades.
+
+### 3. Logística de Eventos (Supervisor)
+- Herramienta avanzada para la **Delegación de Tareas**.
+- El sistema detecta automáticamente la cantidad de personal requerida en función del número de invitados de cada evento aprobado.
+- Asignación dinámica de `Garzones`, `Chefs`, `Bartenders` y personal de `Aseo` leyendo la disponibilidad desde la Base de Datos.
+
+### 4. Portal del Empleado (Staff)
+- Vista adaptativa dependiendo del rol del empleado que inicie sesión.
+- Visualización de calendario de tareas.
+- **Chefs:** Visualizan en detalle la minuta exacta que deben preparar para su evento asignado.
+- **Demás roles:** Reciben detalles sobre mesas asignadas, horarios y requerimientos logísticos.
 
 ---
 
-## 💻 Ejecución Local
+## 🛠️ Tecnologías Utilizadas
 
-### Opción A: Previsualización Inmediata en Navegador
-Para interactuar con todo el flujo simulado y las vistas de roles del frontend:
-1. Instala las dependencias en la raíz:
-   ```bash
-   npm install
-   ```
-2. Ejecuta el servidor de desarrollo:
-   ```bash
-   npm run dev
-   ```
-3. Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
+- **Frontend:** React, Vite, TailwindCSS, Lucide-React.
+- **Backend:** Java, Spring Boot, Spring Security (JWT Auth), Spring Data JPA.
+- **Base de Datos:** PostgreSQL.
 
-### Opción B: Despliegue con Docker Compose
-Para empaquetar y levantar toda la infraestructura real en contenedores:
-1. Asegúrate de tener Docker corriendo.
-2. Inicia los servicios con el comando:
-   ```bash
-   docker-compose up --build
-   ```
-   *Esto compilará los microservicios, configurará las bases de datos individuales de PostgreSQL (`init-multiple-dbs.sh`) y expondrá los servicios.*
+---
+
+## 🚀 Cómo inicializar el proyecto localmente
+
+Este proyecto requiere ejecutar ambos entornos (Frontend y Backend) en paralelo. Sigue los siguientes pasos:
+
+### 1. Configurar la Base de Datos (PostgreSQL)
+Asegúrate de tener PostgreSQL instalado y ejecutándose en el puerto `5432`.
+1. Crea una base de datos llamada `ecogarzones`.
+2. Las credenciales por defecto configuradas en el backend son:
+   - Usuario: `postgres`
+   - Contraseña: `route` *(puedes cambiarlo en `application.properties`)*.
+
+El backend cuenta con un **DataInitializer** que, si detecta la base de datos vacía, poblará automáticamente:
+- **Minutas:** 6 opciones diferentes (Vegano, Tradicional, Dulce, etc).
+- **Usuarios y Roles:** Crea automáticamente roles de `ADMIN`, `SUPERVISOR`, `CHEF`, `GARZON`, `BARTENDER` y `ASEO`.
+
+### 2. Inicializar el Servidor Backend (Spring Boot)
+Abre una terminal, dirígete a la carpeta `BackEnd` y ejecuta:
+
+```bash
+cd BackEnd
+.\mvnw spring-boot:run
+```
+*(El servidor se levantará en `http://localhost:8080`)*.
+
+### 3. Inicializar el Cliente Frontend (React / Vite)
+Abre otra terminal, dirígete a la carpeta `FrontEnd` y ejecuta:
+
+```bash
+cd FrontEnd
+npm install
+npm run dev
+```
+*(La aplicación web estará disponible en `http://localhost:5173`)*.
+
+---
+
+## 🔐 Credenciales de Acceso (Usuarios de Prueba)
+
+Gracias al script de inicialización automática de la base de datos, puedes probar todos los flujos utilizando las siguientes cuentas (la contraseña para todos es su sufijo + `123` o lo puedes revisar en DataInitializer, pero a fines prácticos, aquí tienes accesos directos):
+
+- **Administrador:** `admin@ecogarzones.cl` (Pass: `admin123`)
+- **Supervisor:** `juan.sup@ecogarzones.cl` o `marta.sup@ecogarzones.cl` (Pass: `sup123`)
+- **Chef:** `maria.chef@ecogarzones.cl` (Pass: `chef123`)
+- **Garzón:** `pedro.g@ecogarzones.cl` (Pass: `garzon123`)
+- **Bartender:** `luis.b@ecogarzones.cl` (Pass: `bar123`)
+- **Aseo:** `ana.a@ecogarzones.cl` (Pass: `aseo123`)
+
+*(O puedes utilizar las "Credenciales Rápidas" directamente en la pantalla de Inicio de Sesión que hacen login automático para acelerar el testeo).*
+
+---
+
+## 📝 Notas para Colaboradores
+Si estás leyendo esto porque vas a expandir la aplicación, considera:
+- **Estado de Minutas:** Solamente las minutas en estado `APROBADA` se mostrarán en el cotizador del cliente.
+- **JWT:** El token expira actualmente en 24 horas. Los endpoints seguros validan el rol automáticamente según lo declarado en `SecurityConfig.java`.
+- **Modo Standalone:** Si ejecutas el Frontend sin iniciar el Backend, el sistema intentará retroceder a un estado local "Mock" estático, ¡pero para funcionalidad completa, siempre inicia ambos!
